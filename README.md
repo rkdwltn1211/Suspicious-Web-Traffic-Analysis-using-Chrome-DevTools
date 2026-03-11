@@ -133,7 +133,7 @@ network-traffic-devtools-extension/
 ## Modeling Strategy
 프로젝트에서는 두 가지 모델을 중심으로 비교했습니다
 
-**1) Logistic Regression**
+### 1) Logistic Regression
 가장 먼저 **설명 가능하고 해석이 쉬운 baseline 모델**로 Logistic Regression을 적용했습니다. 
 
 적용한 처리:
@@ -142,7 +142,7 @@ network-traffic-devtools-extension/
 
 이 모델은 feature 자체가 suspicious traffic을 얼마나 잘 구분하는지 확인하는 기준점 역할을 했습니다
 
-**2) Random Forest**
+### 2) Random Forest
 다음으로 feature 간의 **비선형 조합과 조건 기반 패턴**을 포착하기 위래 Random Forest를 적용했습니다.
 
 적용한 설정:
