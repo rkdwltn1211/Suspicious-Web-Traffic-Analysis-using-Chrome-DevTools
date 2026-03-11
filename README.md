@@ -19,9 +19,9 @@
 - 비정상적인 요청 빈도 및 간격
 - 의심스러운 패턴을 보이는 웹 트래픽
 
-문제는 이러한 트래픽이 **겉보기에는 정상 요청과 유사할 수 있어**,  
+문제는 이러한 트래픽이  **겉보기에는 정상 요청과 유사할 수 있어**,  
 단순 rule 기반 탐지만으로는 구분에 한계가 있다는 점입니다.  
-본 프로젝트는 이 문제를 해결하기 위해 **행동 기반 feature + 머신러닝 분류 모델**이라는 접근을 적용했습니다. 
+본 프로젝트는 이 문제를 해결하기 위해  **행동 기반 feature + 머신러닝 분류 모델** 이라는 접근을 적용했습니다. 
 ---
 
 ## Why this project matters
@@ -146,7 +146,131 @@ network-traffic-devtools-extension/
 다음으로 feature 간의 **비선형 조합과 조건 기반 패턴**을 포착하기 위래 Random Forest를 적용했습니다.
 
 적용한 설정:
--n_estimators =300
+- n_estimators =300
 - class_weight = "balance"
 
 ---
+## Results
+
+### Logistic Regression
+Confusion Matrix:
+[[82, 6],
+ [ 1,13]]
+
+해석:
+-정상 → 정상: 82
+-정상 → 의심: 6
+-의심 → 정상: 1
+-의심 → 의심: 13
+
+주요 특징:
+- **Precision(suspicious):1.00**
+- **Recall(suspicious):0.857**
+- **False Positive: 0**
+
+즉, Random Forest는 의심 트래픽 일부를 놓칠 수는 있지만
+**오탐(False Positive)을 완전히 제거하는 보수적인 탐지 성향**을 보였습니다. 
+
+---
+## Model Comparison
+
+| Model               | Recall (suspicious) | Precision (suspicious) | False Positive | False Negative |
+| ------------------- | ------------------: | ---------------------: | -------------: | -------------: |
+| Logistic Regression |                0.93 |                   0.68 |              6 |              1 |
+| Random Forest       |               0.857 |                   1.00 |              0 |              2 |
+
+### Interpretation
+-#### Logistic Regression
+  - suspicious traffic을 놓치지 않는 데 유리
+  - 보안 탐지 관점에서 안정적
+  - 해석 가능성이 높음
+- #### Random Forest
+  - 오탐 최소화에 유리
+  - 실제 경고/차단 시스템에서 보수적 정책에 적합
+  - 복잡한 패턴 학습 가능
+ 
+프로젝트에서는 이 비교를 통해 **탐지 우선 전략 vs 정확도 우선 전략**의 차이를 명확하게 확인했습니다.
+
+---
+## Feture Importance
+Random Forest feature importance 분석 결과,
+**상위 6개 feature가 전체 중요도의 약 86%를 차지**했습니다.
+
+이는 모델이 단순 노이즈가 아닌,
+
+-트래픽 규모 관련 feature
+-희소 이벤트 관련 feature
+-비정상 패턴 비율 관련 feature
+
+같은 핵심 행동 지표에 집중해 판단하고 있음을 보여줍니다.
+
+---
+## System Architecture
+
+이 프로젝트는 단순 모델링에 그치지 않고,
+브라우저 환경에서 실제로 동작하는 end-to-end 탐지 흐름까지 구현했습니다.
+
+```
+Browser Traffic
+    ↓
+DevTools Collector
+    ↓
+Feature Extraction
+    ↓
+ML Model Inference
+    ↓
+Suspicious Score
+    ↓
+Warning in DevTools Panel
+
+```
+즉,
+
+-트래픽 수집
+-feature 생성
+-모델 추론
+-사용자 경고 표시
+까지 하나의 흐름으로 연결했습니다.
+
+---
+##Tech Stack
+**
+-Python
+-scikit-learn
+-TensorFlow / Keras
+-TensorFlow.js
+-JavaScript
+-Chrome DevTools API
+-Chrome Extension API
+-Jupyter Notebook
+**
+
+---
+## Key Takeaways
+이 프로젝트를 통해 확인한 점은 다음과 같습니다.
+
+-행동기반 feature만으로 suspicious traffic 분류가 가능하다. 
+-Logistic Regression은 미탐 최소화 측면에서 강점을 보였다.
+-Random Forest는 오탐 최소화 측면에서 강점을 보였다.
+-브라우저 환경에서도 경량 ML 기반 탐지 시스템을 구현할 수 있다.
+
+---
+## Limitations
+
+-라벨링이 rule 기반 weak labeling에 의존함
+-suspicious class 비율이 낮은 불균형 데이터
+-패킷 내용이 아닌 행동 feature만 사용했기 때문에 정교한 공격 유형 구분에는 한계가 있음
+
+---
+## Future Work
+향후에는 다음 방향으로 확장할 수 있습니다.
+
+-라벨 품질 개선
+-추가 feature 설계
+-threshold tuning
+-시계열 정보 반영
+-위험도 기반 동적 경고 정책 적용
+
+---
+## One-line Summary
+**웹 트래픽 행동 패턴을 요약한 feature를 기반으로 suspicious traffic을 탐지하는 머신러닝 모델을 구축하고, 브라우저 DevTools 환경에서 실제 경고 흐름까지 구현**한 프로젝트입니다.
