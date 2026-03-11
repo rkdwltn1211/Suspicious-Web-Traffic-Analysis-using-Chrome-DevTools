@@ -237,14 +237,14 @@ Warning in DevTools Panel
 ---
 ## Tech Stack
 
--Python
--scikit-learn
--TensorFlow / Keras
--TensorFlow.js
--JavaScript
--Chrome DevTools API
--Chrome Extension API
--Jupyter Notebook
+- Python
+- scikit-learn
+- TensorFlow / Keras
+- TensorFlow.js
+- JavaScript
+- Chrome DevTools API
+- Chrome Extension API
+- Jupyter Notebook
 
 
 ---
