@@ -251,27 +251,27 @@ Warning in DevTools Panel
 ## Key Takeaways
 이 프로젝트를 통해 확인한 점은 다음과 같습니다.
 
--행동기반 feature만으로 suspicious traffic 분류가 가능하다. 
--Logistic Regression은 미탐 최소화 측면에서 강점을 보였다.
--Random Forest는 오탐 최소화 측면에서 강점을 보였다.
--브라우저 환경에서도 경량 ML 기반 탐지 시스템을 구현할 수 있다.
+- 행동기반 feature만으로 suspicious traffic 분류가 가능하다. 
+- Logistic Regression은 미탐 최소화 측면에서 강점을 보였다.
+- Random Forest는 오탐 최소화 측면에서 강점을 보였다.
+- 브라우저 환경에서도 경량 ML 기반 탐지 시스템을 구현할 수 있다.
 
 ---
 ## Limitations
 
--라벨링이 rule 기반 weak labeling에 의존함
--suspicious class 비율이 낮은 불균형 데이터
--패킷 내용이 아닌 행동 feature만 사용했기 때문에 정교한 공격 유형 구분에는 한계가 있음
+- 라벨링이 rule 기반 weak labeling에 의존함
+- suspicious class 비율이 낮은 불균형 데이터
+- 패킷 내용이 아닌 행동 feature만 사용했기 때문에 정교한 공격 유형 구분에는 한계가 있음
 
 ---
 ## Future Work
 향후에는 다음 방향으로 확장할 수 있습니다.
 
--라벨 품질 개선
--추가 feature 설계
--threshold tuning
--시계열 정보 반영
--위험도 기반 동적 경고 정책 적용
+- 라벨 품질 개선
+- 추가 feature 설계
+- threshold tuning
+- 시계열 정보 반영
+- 위험도 기반 동적 경고 정책 적용
 
 ---
 ## One-line Summary
