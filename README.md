@@ -212,7 +212,7 @@ Random Forest feature importance 분석 결과,
 이 프로젝트는 단순 모델링에 그치지 않고,
 브라우저 환경에서 실제로 동작하는 end-to-end 탐지 흐름까지 구현했습니다.
 
-
+```text
 Browser Traffic
     ↓
 DevTools Collector
@@ -224,7 +224,7 @@ ML Model Inference
 Suspicious Score
     ↓
 Warning in DevTools Panel
-
+```
 
 즉,
 
@@ -236,7 +236,7 @@ Warning in DevTools Panel
 
 ---
 ##Tech Stack
-**
+
 -Python
 -scikit-learn
 -TensorFlow / Keras
@@ -245,7 +245,7 @@ Warning in DevTools Panel
 -Chrome DevTools API
 -Chrome Extension API
 -Jupyter Notebook
-**
+
 
 ---
 ## Key Takeaways
