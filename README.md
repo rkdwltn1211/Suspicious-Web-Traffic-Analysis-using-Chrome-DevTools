@@ -104,7 +104,7 @@ network-traffic-devtools-extension/
 ├── package-lock.json
 ├── vite.config.js
 └── README.md
-```
+```text```
 ---
 ## Feature Engineering
 본 프로젝트에서는 개별 패킷의 내용을 해석하기보다, 트랙픽의 행동 패턴을 요약하는 통계 feature를 사용했습니다.
