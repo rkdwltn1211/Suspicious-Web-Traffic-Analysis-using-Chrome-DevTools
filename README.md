@@ -155,15 +155,18 @@ network-traffic-devtools-extension/
 ## Results
 
 ### Logistic Regression
+
+```text
 Confusion Matrix:
 [[82, 6],
  [ 1,13]]
+```
 
 해석:
--정상 → 정상: 82
--정상 → 의심: 6
--의심 → 정상: 1
--의심 → 의심: 13
+- 정상 → 정상: 82
+- 정상 → 의심: 6
+- 의심 → 정상: 1
+- 의심 → 의심: 13
 
 주요 특징:
 - **Precision(suspicious):1.00**
