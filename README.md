@@ -235,7 +235,7 @@ Warning in DevTools Panel
 까지 하나의 흐름으로 연결했습니다.
 
 ---
-##Tech Stack
+## Tech Stack
 
 -Python
 -scikit-learn
