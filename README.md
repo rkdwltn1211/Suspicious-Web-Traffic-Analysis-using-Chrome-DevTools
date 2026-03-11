@@ -182,11 +182,11 @@ Confusion Matrix:
 | Random Forest       |               0.857 |                   1.00 |              0 |              2 |
 
 ### Interpretation
--#### Logistic Regression
+#### Logistic Regression
   - suspicious traffic을 놓치지 않는 데 유리
   - 보안 탐지 관점에서 안정적
   - 해석 가능성이 높음
-- #### Random Forest
+ ####  Random Forest
   - 오탐 최소화에 유리
   - 실제 경고/차단 시스템에서 보수적 정책에 적합
   - 복잡한 패턴 학습 가능
