@@ -119,3 +119,34 @@ network-traffic-devtools-extension/
 | f9      | Suspicious Pattern Ratio      |
 | f12     | Extreme Behavior Indicator    |
 
+
+이 feature들은 다음과 같은 특성을 반영합니다.
+
+-트래픽 규모
+-요청 크기 변화
+-요청 패턴의 불규칙성
+-희소 이벤트 발생 여부
+-비정상 행동 비율
+즉, 이 프로젝트는 **content-based detection이 아니라 behavior-based detection**에 가깝습니다
+
+---
+## Modeling Strategy
+프로젝트에서는 두 가지 모델을 중심으로 비교했습니다
+
+**1) Logistic Regression**
+가장 먼저 **설명 가능하고 해석이 쉬운 baseline 모델**로 Logistic Regression을 적용했습니다. 
+
+적용한 처리:
+- StandardScaler
+- class_weight = "balanced"
+
+이 모델은 feature 자체가 suspicious traffic을 얼마나 잘 구분하는지 확인하는 기준점 역할을 했습니다
+
+**2) Random Forest**
+다음으로 feature 간의 **비선형 조합과 조건 기반 패턴**을 포착하기 위래 Random Forest를 적용했습니다.
+
+적용한 설정:
+-n_estimators =300
+- class_weight = "balance"
+
+---
