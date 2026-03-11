@@ -1,36 +1,75 @@
-# Network Traffic Detection DevTools Extension
 
-Chrome DevTools 기반으로 네트워크 요청 정보를 수집하고,  
-학습된 머신러닝 모델을 활용해 트래픽을 분류하는 프로젝트입니다.
+# Web Traffic Suspicious Behavior Detection
+### Behavior-based suspicious traffic detection with Machine Learning and Chrome DevTools
 
-## Project Overview
+브라우저 DevTools 환경에서 수집한 **웹 트래픽 행동 패턴(feature)**을 기반으로,  
+정상 트래픽과 의심 트래픽을 구분하는 **머신러닝 기반 탐지 시스템**을 구현한 프로젝트입니다.
 
-이 프로젝트는 브라우저 환경에서 발생하는 네트워크 요청 정보를 수집한 뒤,  
-사전에 학습한 모델을 통해 트래픽 특징을 분석하고 분류하는 것을 목표로 합니다.
-
-프로젝트는 크게 두 부분으로 구성됩니다.
-
-- **Chrome DevTools Extension**
-  - 브라우저의 네트워크 요청 데이터를 수집
-  - DevTools Panel에서 결과 확인
-- **Machine Learning Pipeline**
-  - 트래픽 feature 전처리
-  - 모델 학습 및 비교
-  - TensorFlow.js 형식으로 변환하여 확장프로그램에 적용
+이 프로젝트는 단순 rule 기반 탐지를 넘어,  
+**트래픽의 내용(payload)이 아닌 행동 패턴만으로 의심 트래픽을 탐지할 수 있는지**를 검증하는 데 초점을 맞췄습니다. 
 
 ---
 
-## Main Features
+## Overview
 
-- Chrome DevTools 기반 네트워크 요청 수집
-- 트래픽 feature 추출 및 전처리
-- 머신러닝 모델 학습 및 비교
-- TensorFlow.js 모델을 활용한 브라우저 내 추론
-- DevTools Panel UI를 통한 결과 확인
+웹 환경에서는 정상 사용자 요청 외에도 다음과 같은 비정상 접근이 함께 발생합니다.
+
+- 반복적인 자동화 요청
+- 크롤링/봇 기반 접근
+- 비정상적인 요청 빈도 및 간격
+- 의심스러운 패턴을 보이는 웹 트래픽
+
+문제는 이러한 트래픽이 **겉보기에는 정상 요청과 유사할 수 있어**,  
+단순 rule 기반 탐지만으로는 구분에 한계가 있다는 점입니다.  
+본 프로젝트는 이 문제를 해결하기 위해 **행동 기반 feature + 머신러닝 분류 모델**이라는 접근을 적용했습니다. 
+---
+
+## Why this project matters
+
+일반적인 탐지 방식은 다음에 의존하는 경우가 많습니다.
+
+- payload 검사
+- signature 기반 탐지
+- 정적 rule 기반 필터링
+
+하지만 본 프로젝트는 다음 질문에서 출발했습니다.
+
+> **브라우저 환경에서 수집 가능한 최소한의 트래픽 정보만으로도 의심 트래픽 탐지가 가능한가?**
+
+이를 위해 요청 빈도, 시간 간격, 분포 특성 등  
+**행동 패턴을 요약한 14개의 통계 feature**를 설계하고,  
+이를 기반으로 의심 트래픽을 분류하는 모델을 구축했습니다. 
 
 ---
 
-## Project Structure
+## Project Goal
+
+이 프로젝트의 목표는 다음과 같습니다.
+
+1. 웹 트래픽 행동을 요약하는 feature를 설계한다.
+2. 해당 feature만으로 suspicious traffic 분류가 가능한지 검증한다.
+3. 여러 ML 모델을 비교해 탐지 성향을 분석한다.
+4. 최종 모델을 브라우저 DevTools 환경에 연결해 실제 경고 흐름까지 구현한다. 
+
+---
+
+## Data
+
+브라우저 환경에서 DevTools를 이용해 웹 트래픽을 수집하고,  
+feature를 계산한 뒤 JSON 형식으로 저장했습니다. 
+
+### Dataset summary
+
+- **총 수집 트래픽 수:** 4,046
+- **학습에 사용한 데이터:** 506
+- **Feature 수:** 14
+- **Label:**  
+  - `0`: benign  
+  - `1`: suspicious
+- **데이터 특성:** 클래스 불균형 (suspicious 비율이 낮음) 
+
+### Data structure
+
 
 ```text
 network-traffic-devtools-extension/
@@ -65,3 +104,18 @@ network-traffic-devtools-extension/
 ├── package-lock.json
 ├── vite.config.js
 └── README.md
+
+---
+## Feature Engineering
+본 프로젝트에서는 개별 패킷의 내용을 해석하기보다, 트랙픽의 행동 패턴을 요약하는 통계 feature를 사용했습니다.
+대표 feature 예시는 다음과 같습니다.
+
+| Feature | Description                   |
+| ------- | ----------------------------- |
+| f0      | Total Traffic Volume          |
+| f2      | Request Size Variability      |
+| f3      | Behavioral Irregularity Score |
+| f6      | Rare Event Activation Rate    |
+| f9      | Suspicious Pattern Ratio      |
+| f12     | Extreme Behavior Indicator    |
+
