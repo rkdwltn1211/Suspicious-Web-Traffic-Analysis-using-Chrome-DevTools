@@ -149,7 +149,7 @@ network-traffic-devtools-extension/
 
 적용한 설정:
 - n_estimators =300
-- class_weight = "balance"
+- class_weight = "balanced"
 
 ---
 ## Results
