@@ -278,7 +278,7 @@ Warning in DevTools Panel
 | 딥러닝 | TensorFlow / Keras, TensorFlow.js |
 | 데이터 분석 | Pandas, NumPy, Matplotlib, Seaborn |
 | 브라우저 | Chrome DevTools API, Chrome Extension API |
-| 기타 | Jupyter Notebook, Git |
+| 기타 | Jupyter Notebook |
 
 ---
 
