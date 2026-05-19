@@ -1,322 +1,176 @@
-# 🔍 Web Traffic Suspicious Behavior Detection
-### Behavior-based suspicious traffic detection with Machine Learning and Chrome DevTools
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
-![TensorFlow](https://img.shields.io/badge/TensorFlow.js-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![Chrome](https://img.shields.io/badge/Chrome_Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)
+# 🔍 웹 트래픽 의심 행동 탐지 시스템
+### Behavior-based Suspicious Traffic Detection with ML + Chrome Extension
 
-<br>
+**"패킷 내용을 열어보지 않고, 행동 패턴만으로 악성 트래픽을 탐지할 수 있을까?"**
 
-브라우저 DevTools 환경에서 수집한 **웹 트래픽 행동 패턴(feature)**을 기반으로,  
-정상 트래픽과 의심 트래픽을 구분하는 **머신러닝 기반 탐지 시스템**을 구현한 프로젝트입니다.
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)](https://scikit-learn.org)
+[![TensorFlow.js](https://img.shields.io/badge/TensorFlow.js-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/js)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Chrome](https://img.shields.io/badge/Chrome_Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
 
-이 프로젝트는 단순 rule 기반 탐지를 넘어,  
-**트래픽의 내용(payload)이 아닌 행동 패턴만으로 의심 트래픽을 탐지할 수 있는지**를 검증하는 데 초점을 맞췄습니다.
+</div>
 
 ---
 
-## 🏆 핵심 성과
+## 📸 실제 동작 화면
 
-| 지표 | Random Forest | Logistic Regression |
-|------|:---:|:---:|
-| **Precision** (suspicious) | **1.000** ✅ | 0.680 |
-| **Recall** (suspicious) | 0.857 | **0.930** ✅ |
-| **F1-Score** | 0.923 | 0.790 |
-| **Accuracy** | **98.0%** | 93.0% |
-| **False Positive** | **0건** 🎯 | 6건 |
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/chrome_alert.png" alt="Chrome 보안 경고 알림" width="80%"/>
+      <br/><sub><b>🚨 의심 트래픽 탐지 시 Chrome 실시간 경고 알림</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <br/>
+      <h3>Random Forest 탐지 성과</h3>
 
-> **Random Forest**: 오탐(False Positive) 완전 제거 → 정상 트래픽을 의심으로 잘못 분류하지 않음  
-> **Logistic Regression**: Recall 최대화 → 의심 트래픽을 놓치지 않는 데 집중
+| 지표 | 결과 |
+|------|------|
+| **Precision** | **1.000** ✅ |
+| **False Positive** | **0건** 🎯 |
+| **Accuracy** | **98.0%** |
+| **F1-Score** | **0.923** |
 
----
+  <sub><b>정상 트래픽을 단 한 건도 의심으로 잘못 분류하지 않음</b></sub>
+    </td>
+  </tr>
+</table>
 
-## 📌 Overview
-
-웹 환경에서는 정상 사용자 요청 외에도 다음과 같은 비정상 접근이 함께 발생합니다.
-
-- 반복적인 자동화 요청
-- 크롤링/봇 기반 접근
-- 비정상적인 요청 빈도 및 간격
-- 의심스러운 패턴을 보이는 웹 트래픽
-
-문제는 이러한 트래픽이 **겉보기에는 정상 요청과 유사할 수 있어**,  
-단순 rule 기반 탐지만으로는 구분에 한계가 있다는 점입니다.  
-본 프로젝트는 이 문제를 해결하기 위해 **행동 기반 feature + 머신러닝 분류 모델**이라는 접근을 적용했습니다.
+> 📁 `docs/screenshots/chrome_alert.png`에 이미지를 추가하면 자동 표시됩니다.
 
 ---
 
-## ❓ Why this project matters
+## 🎯 핵심 차별화 포인트
 
-일반적인 탐지 방식은 다음에 의존하는 경우가 많습니다.
-
-- payload 검사
-- signature 기반 탐지
-- 정적 rule 기반 필터링
-
-하지만 본 프로젝트는 다음 질문에서 출발했습니다.
-
-> **브라우저 환경에서 수집 가능한 최소한의 트래픽 정보만으로도 의심 트래픽 탐지가 가능한가?**
-
-이를 위해 요청 빈도, 시간 간격, 분포 특성 등  
-**행동 패턴을 요약한 14개의 통계 feature**를 직접 설계하고,  
-이를 기반으로 의심 트래픽을 분류하는 모델을 구축했습니다.
+| | 일반 탐지 방식 | **이 프로젝트** |
+|---|---|---|
+| **탐지 기준** | payload 검사 · signature 기반 | **행동 패턴 14개 feature만으로 탐지** |
+| **feature 출처** | 기존 데이터셋 활용 | **JavaScript로 추출 함수 직접 구현** |
+| **모델 전략** | 단일 모델 사용 | **2개 모델 비교** — 오탐 최소화 vs 미탐 최소화 |
+| **서비스 수준** | 분석 결과 출력으로 완료 | **Chrome Extension end-to-end 경고 흐름 구현** |
+| **결과** | - | Precision **1.000** · False Positive **0건** |
 
 ---
 
-## 🎯 Project Goal
+## 🏗️ 시스템 아키텍처
 
-1. 웹 트래픽 행동을 요약하는 feature를 설계한다.
-2. 해당 feature만으로 suspicious traffic 분류가 가능한지 검증한다.
-3. 여러 ML 모델을 비교해 탐지 성향을 분석한다.
-4. 최종 모델을 브라우저 DevTools 환경에 연결해 실제 경고 흐름까지 구현한다.
-
----
-
-## 📂 Project Structure
-
-```text
-network-traffic-devtools-extension/
-├── extension/
-│   ├── background.js
-│   ├── collector.js
-│   ├── content_script.js
-│   ├── devtools.html
-│   ├── devtools.js
-│   ├── panel.html
-│   ├── panel_bootstrap.js
-│   ├── predictor.js
-│   ├── features.js              # 14개 feature 추출 함수 (직접 구현)
-│   ├── manifest.json
-│   └── tfjs_model/
-│       ├── model.json
-│       └── group1-shard1of1.bin
-│
-├── models/
-│   └── keras/
-│       └── traffic_classifier.keras
-│
-├── training/
-│   ├── 01_data_preprocessing.ipynb
-│   ├── 02_feature_extraction.ipynb
-│   ├── 03_model_export_to_h5.ipynb
-│   ├── 04_model_comparison_random_forest_linear_regression.ipynb
-│   └── traffic_features_v1.json     # 수집된 트래픽 데이터 (4,046건)
-│
-├── package.json
-├── package-lock.json
-├── vite.config.js
-└── README.md
+```mermaid
+graph TD
+    A[브라우저 트래픽 발생] --> B[Chrome DevTools Collector]
+    B -->|Network 패널 직접 캡처| C[Feature Extraction\nfeatures.js 직접 구현]
+    C -->|14개 통계 feature| D[ML 추론\nRandom Forest / Logistic Regression]
+    D -->|Suspicious Score| E{임계값 초과?}
+    E -->|Yes| F[🚨 Chrome 실시간 경고 알림]
+    E -->|No| G[정상 처리]
 ```
 
+> 트래픽 수집 → feature 생성 → 모델 추론 → 실시간 경고까지 **하나의 흐름으로 연결**
+
 ---
 
-## 📊 Dataset
+## 🧠 핵심 구현
 
-브라우저 환경에서 DevTools를 이용해 웹 트래픽을 수집하고,  
-feature를 계산한 뒤 JSON 형식으로 저장했습니다.
+### Feature Engineering — 14개 행동 패턴 직접 설계
+
+payload를 열어보지 않고, 트래픽의 **통계적 행동 특성**만으로 탐지합니다.
+
+| 순위 | Feature | 설명 | 중요도 |
+|:---:|---------|------|:------:|
+| 1 | `length` | 본문 전체 길이 | **0.214** ⭐ |
+| 2 | `kw_fromCharCode` | 난독화 키워드 등장 수 | **0.158** ⭐ |
+| 3 | `entropy` | Shannon 엔트로피 (문자 무작위성) | **0.146** ⭐ |
+| 4 | `avgLineLen` | 평균 줄 길이 | **0.142** ⭐ |
+| 5 | `alphaRatio` | 영문 문자 비율 | **0.110** ⭐ |
+| 6 | `symbolRatio` | 기호 문자 비율 | **0.096** ⭐ |
+| 7~14 | 기타 8개 | `eval`, `atob`, `iframe` 등 | 0.134 |
+
+> 📌 **상위 6개 feature가 전체 중요도의 86.5% 차지** — behavior-based detection의 유효성 확인
+
+### 모델 전략 — 오탐 vs 미탐 트레이드오프
+
+단순히 하나의 모델을 쓰는 것이 아니라, **탐지 목적에 따른 전략 차이**를 분석했습니다.
+
+| 모델 | Precision | Recall | False Positive | 적합한 상황 |
+|------|:---------:|:------:|:--------------:|------------|
+| **Random Forest** | **1.000** | 0.857 | **0건** | 오탐 최소화 — 보수적 차단 정책 |
+| Logistic Regression | 0.680 | **0.930** | 6건 | 미탐 최소화 — 놓치지 않는 탐지 |
+
+---
+
+## 🔥 Trouble Shooting
+
+### feature 설계 — "어떤 신호가 악성을 구분하는가"
+
+**문제**: payload를 보지 않고 트래픽을 구분하려면 어떤 feature를 써야 할지 기준이 없었음
+
+**접근**: 악성 트래픽의 특성을 도메인 관점에서 역으로 추론
+- 난독화 코드는 `fromCharCode()`, `eval()`, `atob()` 같은 키워드를 많이 씀
+- 악성 스크립트는 일반 코드보다 엔트로피(문자 무작위성)가 높음
+- 길이와 줄 구조가 정상 리소스와 다른 패턴을 보임
+
+**결과**: 직접 설계한 14개 feature로 Precision **1.000** 달성
+
+---
+
+### 클래스 불균형 (정상 87% vs 의심 13%)
+
+**문제**: 의심 트래픽이 전체의 13%에 불과해 모델이 정상으로만 예측하는 경향
+
+**해결**: `class_weight="balanced"` 적용으로 소수 클래스(의심) 가중치 자동 보정
+
+**학습**: 불균형 데이터에서 Accuracy만 보면 안 된다 — Precision/Recall/F1을 함께 봐야 실제 성능을 알 수 있음
+
+---
+
+## 📊 데이터셋
 
 | 항목 | 내용 |
 |------|------|
 | 총 수집 트래픽 | 4,046건 |
 | 학습 데이터 | 506건 |
 | 클래스 | 정상(0): 439건 / 의심(1): 67건 |
-| 형식 | JSON |
 | 수집 방법 | Chrome DevTools Network 패널 직접 캡처 |
 
-> ⚠️ 의심 트래픽(13%)과 정상 트래픽(87%) 간 **클래스 불균형** 존재  
-> → `class_weight="balanced"` 적용으로 보정
-
 ---
 
-## 🧩 Feature Engineering
-
-본 프로젝트에서는 개별 패킷의 내용을 해석하기보다,  
-트래픽의 **행동 패턴을 요약하는 통계 feature**를 직접 설계했습니다.
-
-즉, 이 프로젝트는 **content-based detection이 아니라 behavior-based detection**입니다.
-
-| Feature | 이름 | 설명 | 중요도 |
-|---------|------|------|:------:|
-| f0 | `length` | 본문 전체 길이 | **0.214** ⭐ |
-| f9 | `kw_fromCharCode` | `fromCharCode()` 난독화 키워드 등장 수 | **0.158** ⭐ |
-| f6 | `entropy` | Shannon 엔트로피 (문자 무작위성) | **0.146** ⭐ |
-| f2 | `avgLineLen` | 평균 줄 길이 | **0.142** ⭐ |
-| f4 | `alphaRatio` | 영문 문자 비율 | **0.110** ⭐ |
-| f5 | `symbolRatio` | 기호 문자 비율 | **0.096** ⭐ |
-| f3 | `digitRatio` | 숫자 문자 비율 | 0.047 |
-| f12 | `kw_script` | `<script>` 태그 수 | 0.024 |
-| f1 | `lines` | 줄 수 | 0.022 |
-| f10 | `kw_unescape` | `unescape()` 등장 수 | 0.018 |
-| f11 | `kw_documentWrite` | `document.write()` 등장 수 | 0.013 |
-| f7 | `kw_eval` | `eval()` 등장 수 | 0.010 |
-| f8 | `kw_atob` | `atob()` 등장 수 | 0.000 |
-| f13 | `kw_iframe` | `<iframe>` 태그 수 | 0.000 |
-
-> 📌 **상위 6개 feature가 전체 중요도의 86.5% 차지**
-
----
-
-## 🤖 Modeling Strategy
-
-### 1) Logistic Regression (Baseline)
-
-가장 먼저 **설명 가능하고 해석이 쉬운 baseline 모델**로 적용했습니다.
-
-- `StandardScaler` 적용
-- `class_weight="balanced"`
-- feature 자체가 suspicious traffic을 얼마나 잘 구분하는지 확인하는 기준점 역할
-
-### 2) Random Forest
-
-feature 간의 **비선형 조합과 조건 기반 패턴**을 포착하기 위해 적용했습니다.
-
-- `n_estimators=300`
-- `class_weight="balanced"`
-- feature importance 분석으로 해석력 확보
-
----
-
-## 📈 Results
-
-### Confusion Matrix
-
-**Model A · Random Forest**
-```
-[[88,  0],
- [ 2, 12]]
-```
-- 정상 → 정상: 88  |  정상 → 의심: **0** 🎯
-- 의심 → 정상: 2   |  의심 → 의심: 12
-
-**Model B · Logistic Regression**
-```
-[[82,  6],
- [ 1, 13]]
-```
-- 정상 → 정상: 82  |  정상 → 의심: 6
-- 의심 → 정상: 1   |  의심 → 의심: 13
-
-### Model Comparison
-
-| Model | Recall (suspicious) | Precision (suspicious) | False Positive | False Negative |
-|-------|:-------------------:|:----------------------:|:--------------:|:--------------:|
-| Logistic Regression | **0.930** | 0.680 | 6 | 1 |
-| Random Forest | 0.857 | **1.000** | **0** | 2 |
-
-### Interpretation
-
-**Logistic Regression**
-- suspicious traffic을 놓치지 않는 데 유리 (높은 Recall)
-- 보안 탐지 관점에서 안정적
-- 해석 가능성이 높음
-
-**Random Forest**
-- 오탐 최소화에 유리 (Precision 1.000)
-- 실제 경고/차단 시스템에서 보수적 정책에 적합
-- 복잡한 패턴 학습 가능
-
-> 이 비교를 통해 **탐지 우선 전략 vs 정확도 우선 전략**의 차이를 명확하게 확인했습니다.
-
----
-
-## 📊 Feature Importance
-
-Random Forest feature importance 분석 결과,  
-**상위 6개 feature가 전체 중요도의 약 86.5%를 차지**했습니다.
+## 📁 프로젝트 구조
 
 ```
-length          ████████████████████  0.214
-kw_fromCharCode ███████████████       0.158
-entropy         ██████████████        0.146
-avgLineLen      █████████████         0.142
-alphaRatio      ██████████            0.110
-symbolRatio     █████████             0.096
-...
+network-traffic-devtools-extension/
+├── extension/
+│   ├── features.js          # 14개 feature 추출 함수 (직접 구현)
+│   ├── predictor.js         # ML 추론 로직
+│   ├── collector.js         # DevTools 트래픽 수집
+│   └── tfjs_model/          # TensorFlow.js 모델
+│
+├── training/
+│   ├── 01_data_preprocessing.ipynb
+│   ├── 02_feature_extraction.ipynb
+│   ├── 03_model_export_to_h5.ipynb
+│   └── 04_model_comparison.ipynb   # RF vs LR 비교 분석
+│
+└── README.md
 ```
 
-이는 모델이 단순 노이즈가 아닌,
-트래픽 규모 / 난독화 키워드 / 문자 무작위성 같은 **핵심 행동 지표**에 집중해 판단하고 있음을 보여줍니다.
+---
+
+## ⚠️ 한계 및 개선 방향
+
+| 한계 | 개선 방향 |
+|------|-----------|
+| 라벨링이 rule 기반 weak labeling에 의존 | 전문가 라벨링 또는 능동 학습 적용 |
+| 의심 클래스 비율 낮음 (13%) | 추가 수집 + SMOTE 오버샘플링 |
+| 정교한 공격 유형 구분 한계 | 시계열 feature 추가 (요청 간격·빈도 패턴) |
 
 ---
 
-## 🔄 System Architecture
+<div align="center">
 
-단순 모델링에 그치지 않고, 브라우저 환경에서 실제로 동작하는 **end-to-end 탐지 흐름**까지 구현했습니다.
+**📬 문의는 GitHub Issues 또는 [rkdwl3264@naver.com](mailto:rkdwl3264@naver.com)으로 남겨주세요**
 
-```
-Browser Traffic
-      │
-      ▼
-DevTools Collector       Chrome DevTools Network 패널에서 직접 캡처
-      │
-      ▼
-Feature Extraction       14개 통계 feature 추출 (features.js 직접 구현)
-      │
-      ▼
-ML Inference             Random Forest / Logistic Regression
-      │
-      ▼
-Suspicious Score
-      │
-      ▼
-Warning in DevTools Panel
-```
+[![GitHub](https://img.shields.io/badge/rkdwltn1211-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/rkdwltn1211)
 
-트래픽 수집 → feature 생성 → 모델 추론 → 사용자 경고 표시까지  
-**하나의 흐름으로 연결**했습니다.
-
----
-
-## 🛠 Tech Stack
-
-| 분류 | 기술 |
-|------|------|
-| 언어 | Python, JavaScript |
-| ML | scikit-learn (Random Forest, Logistic Regression) |
-| 딥러닝 | TensorFlow / Keras, TensorFlow.js |
-| 데이터 분석 | Pandas, NumPy, Matplotlib, Seaborn |
-| 브라우저 | Chrome DevTools API, Chrome Extension API |
-| 기타 | Jupyter Notebook |
-
----
-
-## 💡 Key Takeaways
-
-- 행동 기반 feature만으로 suspicious traffic 분류가 가능하다.
-- Logistic Regression은 미탐 최소화 측면에서 강점을 보였다.
-- Random Forest는 오탐 최소화 측면에서 강점을 보였다.
-- 브라우저 환경에서도 경량 ML 기반 탐지 시스템을 구현할 수 있다.
-- 상위 6개 feature(86.5%)가 모델 판단을 주도 — behavior-based detection의 유효성 확인
-
----
-
-## ⚠️ Limitations
-
-- 라벨링이 rule 기반 weak labeling에 의존함
-- suspicious class 비율이 낮은 불균형 데이터 (13%)
-- 패킷 내용이 아닌 행동 feature만 사용했기 때문에 정교한 공격 유형 구분에는 한계가 있음
-
----
-
-## 🔭 Future Work
-
-- 라벨 품질 개선 (전문가 라벨링 또는 능동 학습)
-- 추가 feature 설계 (시계열 정보, 요청 간격 반영)
-- threshold tuning으로 Recall/Precision 트레이드오프 조정
-- 위험도 기반 동적 경고 정책 적용
-
----
-
-## 📝 One-line Summary
-
-> **웹 트래픽 행동 패턴을 요약한 feature를 기반으로 suspicious traffic을 탐지하는 머신러닝 모델을 구축하고, 브라우저 DevTools 환경에서 실제 경고 흐름까지 구현**한 프로젝트입니다.
-
----
-
-## 👤 개발자
-
-**강지수 (Kang Ji Soo)**  
-📧 rkdwl3264@naver.com  
-🐙 [github.com/rkdwltn1211](https://github.com/rkdwltn1211)
+</div>
