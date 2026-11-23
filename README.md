@@ -1,176 +1,73 @@
 <div align="center">
 
-# 🔍 웹 트래픽 의심 행동 탐지 시스템
-### Behavior-based Suspicious Traffic Detection with ML + Chrome Extension
+# 웹 트래픽 의심 행동 탐지 시스템
 
-**"패킷 내용을 열어보지 않고, 행동 패턴만으로 악성 트래픽을 탐지할 수 있을까?"**
+**Behavior-based Suspicious Traffic Detection with ML + Chrome Extension**
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)](https://scikit-learn.org)
-[![TensorFlow.js](https://img.shields.io/badge/TensorFlow.js-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/js)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![Chrome](https://img.shields.io/badge/Chrome_Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
+Chrome DevTools에서 HTTP 응답 본문을 분석하고, 의심 점수가 임계값에 도달하면 웹페이지에 경고 배너를 표시합니다.
+
+![Chrome Extension MV3](https://img.shields.io/badge/Chrome%20Extension-MV3-4285F4?logo=googlechrome)
+![TensorFlow.js 4.22.0](https://img.shields.io/badge/TensorFlow.js-4.22.0-FF6F00?logo=tensorflow)
 
 </div>
 
----
+## 주요 기능
 
-## 📸 실제 동작 화면
+- **Collector** — 검사 대상 탭의 HTTP 응답을 수집하고 카운터를 갱신합니다. **Download JSON**으로 저장하고 **Clear**로 초기화한 뒤 다시 수집할 수 있습니다.
+- **브라우저 추론** — 응답 본문에서 추출한 14개 특징을 표준화하고, 로컬 TensorFlow.js Layers 모델로 의심 점수를 계산합니다.
+- **페이지 경고** — ML 점수가 **0.5 이상**이면 웹페이지에 배너를 표시합니다. URL과 MIME 등은 DOM 텍스트로 표시하며, 배너는 약 6초 후 사라집니다.
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/chrome_alert.png" alt="Chrome 보안 경고 알림" width="80%"/>
-      <br/><sub><b>🚨 의심 트래픽 탐지 시 Chrome 실시간 경고 알림</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <br/>
-      <h3>Random Forest 탐지 성과</h3>
+<!-- 데모 스크린샷을 추가할 위치. Collector 카운터와 웹페이지 배너가 함께 보이는 Chrome 화면을 사용합니다. -->
 
-| 지표 | 결과 |
-|------|------|
-| **Precision** | **1.000** ✅ |
-| **False Positive** | **0건** 🎯 |
-| **Accuracy** | **98.0%** |
-| **F1-Score** | **0.923** |
+## 실행 방법
 
-  <sub><b>정상 트래픽을 단 한 건도 의심으로 잘못 분류하지 않음</b></sub>
-    </td>
-  </tr>
-</table>
+1. Chrome에서 `chrome://extensions`를 열고 **개발자 모드**를 켭니다.
+2. **압축해제된 확장 프로그램을 로드합니다**를 선택하고 프로젝트의 [`extension/`](extension/) 폴더를 지정합니다.
+3. 분석할 탭의 DevTools에서 **Collector** 패널을 연 뒤, **그 상태에서 페이지를 새로고침**합니다. 패널 실행 이후 완료되는 응답부터 수집합니다. DevTools 탭 목록에 Collector가 보이지 않으면 오버플로 메뉴를 확인하세요.
 
-> 📁 `docs/screenshots/chrome_alert.png`에 이미지를 추가하면 자동 표시됩니다.
+확장 폴더에 TensorFlow.js 번들과 모델이 포함되어 있습니다. 코드나 모델 파일을 변경했다면 확장 관리 화면에서 다시 로드하고 DevTools를 다시 여세요.
 
----
-
-## 🎯 핵심 차별화 포인트
-
-| | 일반 탐지 방식 | **이 프로젝트** |
-|---|---|---|
-| **탐지 기준** | payload 검사 · signature 기반 | **행동 패턴 14개 feature만으로 탐지** |
-| **feature 출처** | 기존 데이터셋 활용 | **JavaScript로 추출 함수 직접 구현** |
-| **모델 전략** | 단일 모델 사용 | **2개 모델 비교** — 오탐 최소화 vs 미탐 최소화 |
-| **서비스 수준** | 분석 결과 출력으로 완료 | **Chrome Extension end-to-end 경고 흐름 구현** |
-| **결과** | - | Precision **1.000** · False Positive **0건** |
-
----
-
-## 🏗️ 시스템 아키텍처
+## 동작 구조
 
 ```mermaid
-graph TD
-    A[브라우저 트래픽 발생] --> B[Chrome DevTools Collector]
-    B -->|Network 패널 직접 캡처| C[Feature Extraction\nfeatures.js 직접 구현]
-    C -->|14개 통계 feature| D[ML 추론\nRandom Forest / Logistic Regression]
-    D -->|Suspicious Score| E{임계값 초과?}
-    E -->|Yes| F[🚨 Chrome 실시간 경고 알림]
-    E -->|No| G[정상 처리]
+flowchart TD
+    A["검사 대상 탭의 HTTP 응답"] --> B["DevTools Collector · 응답 본문 수집"]
+    B --> C["14개 특징 추출"]
+    C --> D["규칙 기반 약한 라벨 · RULE 로그"]
+    C --> E["표준화 · TensorFlow.js Layers 추론"]
+    E -->|"점수 ≥ 0.5"| F["Collector → Background Service Worker"]
+    F --> G["Content Script → 웹페이지 배너"]
 ```
 
-> 트래픽 수집 → feature 생성 → 모델 추론 → 실시간 경고까지 **하나의 흐름으로 연결**
+[특징 추출 코드](extension/features.js)는 본문 길이, 줄 수, 문자 비율, Shannon 엔트로피, `eval`·`atob` 등 특정 키워드의 등장 횟수를 계산합니다. Collector는 상태 코드 200–399, 허용된 HTML·JSON·JavaScript MIME, 50자 이상 본문을 기준으로 필터링하고 중복을 제외합니다. RULE 탐지 결과는 로그에 기록되며, 배너는 ML 점수 기준으로 표시됩니다.
 
----
+## 모델 및 평가 결과
 
-## 🧠 핵심 구현
+**브라우저**에서는 [TensorFlow.js 4.22.0](extension/tf.min.js)과 [14입력 Layers 모델](extension/model/model.json)을 사용합니다. 모델은 Scaler로 표준화한 14개 특징에서 sigmoid 점수 하나를 출력합니다. 학습 및 내보내기 과정은 [모델 학습 노트북](training/03_model_export_to_h5.ipynb)에 있습니다.
 
-### Feature Engineering — 14개 행동 패턴 직접 설계
+**Python 비교 실험**에서는 [평가 노트북](training/04_random_forest_vs_linear_regression.ipynb)에서 Random Forest와 scikit-learn Logistic Regression을 비교했습니다. 수집 요청 4,046건 중 보관된 506건에 규칙 기반 약한 라벨을 부여했습니다. 그중 정상 라벨은 439건, 의심 라벨은 67건입니다.
 
-payload를 열어보지 않고, 트래픽의 **통계적 행동 특성**만으로 탐지합니다.
+| Python 모델 | 의심 클래스 Precision | 의심 클래스 Recall | 의심 클래스 F1 | 약한 라벨 기준 FP |
+| --- | ---: | ---: | ---: | ---: |
+| Random Forest | 1.000 | 0.857 | 0.923 | 0 |
+| Logistic Regression | 0.68 | 0.93 | 0.79 | 6 |
 
-| 순위 | Feature | 설명 | 중요도 |
-|:---:|---------|------|:------:|
-| 1 | `length` | 본문 전체 길이 | **0.214** ⭐ |
-| 2 | `kw_fromCharCode` | 난독화 키워드 등장 수 | **0.158** ⭐ |
-| 3 | `entropy` | Shannon 엔트로피 (문자 무작위성) | **0.146** ⭐ |
-| 4 | `avgLineLen` | 평균 줄 길이 | **0.142** ⭐ |
-| 5 | `alphaRatio` | 영문 문자 비율 | **0.110** ⭐ |
-| 6 | `symbolRatio` | 기호 문자 비율 | **0.096** ⭐ |
-| 7~14 | 기타 8개 | `eval`, `atob`, `iframe` 등 | 0.134 |
+Random Forest는 평가 샘플 102건 중 100건에서 약한 라벨과 일치해 **Weak Labeling 기준 정확도 98.04%**를 기록했습니다. 실제 악성 탐지 성능을 평가하려면 독립적으로 검증한 라벨과 별도의 데이터셋이 필요합니다.
 
-> 📌 **상위 6개 feature가 전체 중요도의 86.5% 차지** — behavior-based detection의 유효성 확인
+## 프로젝트 구조
 
-### 모델 전략 — 오탐 vs 미탐 트레이드오프
+| 경로 | 역할 |
+| --- | --- |
+| [`extension/manifest.json`](extension/manifest.json) | Manifest V3 확장 설정 |
+| [`extension/collector.js`](extension/collector.js) · [`features.js`](extension/features.js) | 응답 수집, 카운터, JSON 내보내기, 특징 추출 |
+| [`extension/predictor.js`](extension/predictor.js) · [`extension/model/`](extension/model/) | 브라우저 추론, 모델 JSON, 가중치, Scaler |
+| [`extension/background.js`](extension/background.js) · [`content_script.js`](extension/content_script.js) | 대상 탭으로 경고 전달, DOM 배너 표시 |
+| [`training/`](training/) | 데이터 처리, 모델 학습, Python 비교 실험 |
 
-단순히 하나의 모델을 쓰는 것이 아니라, **탐지 목적에 따른 전략 차이**를 분석했습니다.
+## 한계 및 개선 방향
 
-| 모델 | Precision | Recall | False Positive | 적합한 상황 |
-|------|:---------:|:------:|:--------------:|------------|
-| **Random Forest** | **1.000** | 0.857 | **0건** | 오탐 최소화 — 보수적 차단 정책 |
-| Logistic Regression | 0.680 | **0.930** | 6건 | 미탐 최소화 — 놓치지 않는 탐지 |
+- **실행 범위** — Collector를 연 검사 대상 탭의 응답을 분석합니다. 경고는 웹페이지 안에 표시되며, 네트워크 요청을 자동 차단하는 기능은 없습니다.
+- **내보내기 데이터** — JSON에는 전체 요청 URL과 응답 본문 앞 최대 200자가 포함됩니다. 공유 전에 쿼리 문자열과 본문 발췌에 민감한 정보가 있는지 확인하세요.
+- **평가 범위** — 규칙 기반 라벨과 클래스 불균형의 영향을 받습니다. 독립 라벨로 평가하고, 다양한 사이트의 응답에서 오탐과 미탐을 확인하는 것이 다음 검증 과제입니다.
 
----
-
-## 🔥 Trouble Shooting
-
-### feature 설계 — "어떤 신호가 악성을 구분하는가"
-
-**문제**: payload를 보지 않고 트래픽을 구분하려면 어떤 feature를 써야 할지 기준이 없었음
-
-**접근**: 악성 트래픽의 특성을 도메인 관점에서 역으로 추론
-- 난독화 코드는 `fromCharCode()`, `eval()`, `atob()` 같은 키워드를 많이 씀
-- 악성 스크립트는 일반 코드보다 엔트로피(문자 무작위성)가 높음
-- 길이와 줄 구조가 정상 리소스와 다른 패턴을 보임
-
-**결과**: 직접 설계한 14개 feature로 Precision **1.000** 달성
-
----
-
-### 클래스 불균형 (정상 87% vs 의심 13%)
-
-**문제**: 의심 트래픽이 전체의 13%에 불과해 모델이 정상으로만 예측하는 경향
-
-**해결**: `class_weight="balanced"` 적용으로 소수 클래스(의심) 가중치 자동 보정
-
-**학습**: 불균형 데이터에서 Accuracy만 보면 안 된다 — Precision/Recall/F1을 함께 봐야 실제 성능을 알 수 있음
-
----
-
-## 📊 데이터셋
-
-| 항목 | 내용 |
-|------|------|
-| 총 수집 트래픽 | 4,046건 |
-| 학습 데이터 | 506건 |
-| 클래스 | 정상(0): 439건 / 의심(1): 67건 |
-| 수집 방법 | Chrome DevTools Network 패널 직접 캡처 |
-
----
-
-## 📁 프로젝트 구조
-
-```
-network-traffic-devtools-extension/
-├── extension/
-│   ├── features.js          # 14개 feature 추출 함수 (직접 구현)
-│   ├── predictor.js         # ML 추론 로직
-│   ├── collector.js         # DevTools 트래픽 수집
-│   └── tfjs_model/          # TensorFlow.js 모델
-│
-├── training/
-│   ├── 01_data_preprocessing.ipynb
-│   ├── 02_feature_extraction.ipynb
-│   ├── 03_model_export_to_h5.ipynb
-│   └── 04_model_comparison.ipynb   # RF vs LR 비교 분석
-│
-└── README.md
-```
-
----
-
-## ⚠️ 한계 및 개선 방향
-
-| 한계 | 개선 방향 |
-|------|-----------|
-| 라벨링이 rule 기반 weak labeling에 의존 | 전문가 라벨링 또는 능동 학습 적용 |
-| 의심 클래스 비율 낮음 (13%) | 추가 수집 + SMOTE 오버샘플링 |
-| 정교한 공격 유형 구분 한계 | 시계열 feature 추가 (요청 간격·빈도 패턴) |
-
----
-
-<div align="center">
-
-**📬 문의는 GitHub Issues 또는 [rkdwl3264@naver.com](mailto:rkdwl3264@naver.com)으로 남겨주세요**
-
-[![GitHub](https://img.shields.io/badge/rkdwltn1211-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/rkdwltn1211)
-
-</div>
+문의는 GitHub Issues 또는 [이메일](mailto:rkdwl3264@naver.com)로 남겨주세요.
