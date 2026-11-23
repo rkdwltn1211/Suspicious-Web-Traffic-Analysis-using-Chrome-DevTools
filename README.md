@@ -17,7 +17,13 @@ Chrome DevTools에서 HTTP 응답 본문을 분석하고, 의심 점수가 임�
 - **브라우저 추론** — 응답 본문에서 추출한 14개 특징을 표준화하고, 로컬 TensorFlow.js Layers 모델로 의심 점수를 계산합니다.
 - **페이지 경고** — ML 점수가 **0.5 이상**이면 웹페이지에 배너를 표시합니다. URL과 MIME 등은 DOM 텍스트로 표시하며, 배너는 약 6초 후 사라집니다.
 
-<!-- 데모 스크린샷을 추가할 위치. Collector 카운터와 웹페이지 배너가 함께 보이는 Chrome 화면을 사용합니다. -->
+## 실행 화면 (Demo)
+
+### HTTP 응답 수집
+![Chrome DevTools Collector](docs/screenshots/sc1)
+
+### 머신러닝 경고 배너
+![머신러닝 기반 의심 트래픽 경고](docs/screenshots/sc2)
 
 ## 실행 방법
 
