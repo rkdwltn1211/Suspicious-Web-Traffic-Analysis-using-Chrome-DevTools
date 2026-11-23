@@ -29,10 +29,10 @@ Chrome DevTools에서 HTTP 응답 본문을 분석하고, 의심 점수가 임�
   </tr>
   <tr>
     <td align="center">
-      <img src="docs/screenshots/sc1" width="100%" alt="Chrome DevTools Collector">
+      <img src="docs/screenshots/sc2" width="100%" alt="Chrome DevTools Collector">
     </td>
     <td align="center">
-      <img src="docs/screenshots/sc2" width="100%" alt="머신러닝 경고 배너">
+      <img src="docs/screenshots/sc1" width="100%" alt="머신러닝 경고 배너">
     </td>
   </tr>
 </table>
