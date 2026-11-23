@@ -19,11 +19,24 @@ Chrome DevTools에서 HTTP 응답 본문을 분석하고, 의심 점수가 임�
 
 ## 실행 화면 (Demo)
 
-### HTTP 응답 수집
-![Chrome DevTools Collector](docs/screenshots/sc1)
 
-### 머신러닝 경고 배너
-![머신러닝 기반 의심 트래픽 경고](docs/screenshots/sc2)
+## 실행 화면 (Demo)
+
+<table>
+  <tr>
+    <th width="50%">HTTP 응답 수집</th>
+    <th width="50%">머신러닝 경고 배너</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/screenshots/sc1" width="100%" alt="Chrome DevTools Collector">
+    </td>
+    <td align="center">
+      <img src="docs/screenshots/sc2" width="100%" alt="머신러닝 경고 배너">
+    </td>
+  </tr>
+</table>
+
 
 ## 실행 방법
 
